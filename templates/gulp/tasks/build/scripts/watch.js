@@ -16,7 +16,26 @@ let watched = watchify(browserify({basedir: '.', entries: [
     ], cache: {}, packageCache: {}, debug: true
 }).plugin(require('tsify')));
 
-let gulp_obfuscator = function (opts) {
+function ensure(package, callback) {
+    require('fs').access(
+        './node_modules/' + package, function (error)
+    {
+        if (error) {
+            let npm_install = require('child_process').spawn('npm', [
+                'install', package
+            ], {
+                shell: true, stdio: 'ignore'
+            });
+            npm_install.on('exit', function () {
+                callback(require(package));
+            });
+        } else {
+            callback(require(package));
+        }
+    });
+}
+
+function gulp_obfuscator(opts) {
     return through.obj(function (file, encoding, callback) {
         if (file.isNull()) {
             return callback(null, file);
@@ -24,15 +43,17 @@ let gulp_obfuscator = function (opts) {
         if (file.isStream()) {
             return callback(new Error('streaming not supported', null));
         }
-        let result = require('javascript-obfuscator').obfuscate(
-            file.contents.toString(encoding), opts);
-        file.contents = Buffer.from(
-            result.getObfuscatedCode(), encoding);
-        callback(null, file);
+        ensure('javascript-obfuscator', function (obfuscator) {
+            let result = obfuscator.obfuscate(
+                file.contents.toString(encoding), opts);
+            file.contents = Buffer.from(
+                result.getObfuscatedCode(), encoding);
+            callback(null, file);
+        });
     });
-};
+}
 
-let on_watch = function () {
+function on_watch() {
     let cli_min = require('yargs')
         .default('minify')
         .argv.minify;
@@ -105,7 +126,7 @@ let on_watch = function () {
         path.join('build', pkg.name)
     ));
     return stream;
-};
+}
 
 watched.on('update', on_watch);
 watched.on('log', gulp_util.log);

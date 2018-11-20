@@ -35,7 +35,7 @@ module.exports = class extends Generator {
             );
             pkg.dependencies = sort(
                 lodash.assign(pkg.dependencies, {
-                    '@dizmo/functions': '^2.3.1',
+                    '@dizmo/functions': '^2.6.6',
                     '@dizmo/types': '^1.0.0'
                 })
             );
@@ -47,7 +47,7 @@ module.exports = class extends Generator {
             pkg.devDependencies = sort(
                 lodash.assign(pkg.devDependencies, {
                     'gulp-tslint': '^8.1.3',
-                    'tsify': '^4.0.0',
+                    'tsify': '^4.0.1',
                     'tslint': '^5.11.0',
                     'typescript': '^3.1.4'
                 })

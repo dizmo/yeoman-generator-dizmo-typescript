@@ -10,7 +10,26 @@ let buffer = require('vinyl-buffer'),
     through = require('through2'),
     tsify = require('tsify');
 
-let gulp_obfuscator = function (opts) {
+function ensure(package, callback) {
+    require('fs').access(
+        './node_modules/' + package, function (error)
+    {
+        if (error) {
+            let npm_install = require('child_process').spawn('npm', [
+                'install', package
+            ], {
+                shell: true, stdio: 'ignore'
+            });
+            npm_install.on('exit', function () {
+                callback(require(package));
+            });
+        } else {
+            callback(require(package));
+        }
+    });
+}
+
+function gulp_obfuscator(opts) {
     return through.obj(function (file, encoding, callback) {
         if (file.isNull()) {
             return callback(null, file);
@@ -18,13 +37,15 @@ let gulp_obfuscator = function (opts) {
         if (file.isStream()) {
             return callback(new Error('streaming not supported', null));
         }
-        let result = require('javascript-obfuscator').obfuscate(
-            file.contents.toString(encoding), opts);
-        file.contents = Buffer.from(
-            result.getObfuscatedCode(), encoding);
-        callback(null, file);
+        ensure('javascript-obfuscator', function (obfuscator) {
+            let result = obfuscator.obfuscate(
+                file.contents.toString(encoding), opts);
+            file.contents = Buffer.from(
+                result.getObfuscatedCode(), encoding);
+            callback(null, file);
+        });
     });
-};
+}
 
 gulp.task('scripts', function () {
     let cli_min = require('yargs')
