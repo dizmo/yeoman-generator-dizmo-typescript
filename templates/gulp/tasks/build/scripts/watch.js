@@ -14,7 +14,9 @@ let buffer = require('vinyl-buffer'),
 let watched = watchify(browserify({basedir: '.', entries: [
         'src/app/app.ts'
     ], cache: {}, packageCache: {}, debug: true
-}).plugin(require('tsify')));
+}).plugin(require('tsify')).transform('babelify', {
+    presets: ['@babel/preset-env'], extensions: ['.ts']
+}));
 
 function ensure(package, callback) {
     require('fs').access(

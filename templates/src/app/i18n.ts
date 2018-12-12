@@ -8,21 +8,30 @@ declare const i18n: (
 ) => void;
 
 export class I18N {
-    public static init(
-        callback: (t: TranslationFunction) => void
-    ): void {
-        i18n((error: any, t: TranslationFunction): void => {
-            if (typeof callback === 'function') {
-                callback((
-                    key: string, options: TranslationOptions = {}
-                ): string => {
-                    if (options.keySeparator === undefined) {
-                        options.keySeparator = '/';
-                    }
-                    return t(key, options);
-                });
-            }
+    public static init(): Promise<TranslationFunction> {
+        return new Promise((resolve, reject) => {
+            i18n((error: any, t: TranslationFunction): void => {
+                if (t && !error) {
+                    resolve(this.translate((
+                        key: string, options: TranslationOptions = {}
+                    ): string => {
+                        if (options.keySeparator === undefined) {
+                            options.keySeparator = '/';
+                        }
+                        return t(key, options);
+                    }));
+                } else {
+                    reject(error);
+                }
+            });
         });
+    }
+    private static translate(t: TranslationFunction): TranslationFunction {
+        const cell = document.getElementsByClassName('table-cell')[0];
+        cell.textContent = t('greeting');
+        const done = document.getElementById('done');
+        done.textContent = t('done');
+        return t;
     }
 }
 

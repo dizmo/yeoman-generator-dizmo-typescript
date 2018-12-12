@@ -98,7 +98,9 @@ gulp.task('scripts', function () {
         basedir: '.', debug: !!argv.sourcemaps, entries: [
             'src/app/app.ts'
         ]
-    }).plugin(tsify);
+    }).plugin(tsify).transform('babelify', {
+        presets: ['@babel/preset-env'], extensions: ['.ts']
+    });
 
     let stream = browserified.bundle()
         .pipe(source('index.js')).pipe(buffer());

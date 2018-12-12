@@ -5,8 +5,8 @@ declare const bundle: Bundle;
 import Dizmo from './dizmo/types/dizmo';
 declare const dizmo: Dizmo;
 
-import { trace, traceable } from '@dizmo/functions';
-import { I18N, TranslationFunction } from './i18n';
+import { trace } from '@dizmo/functions';
+import { I18N } from './i18n';
 
 @trace
 export class App {
@@ -14,16 +14,15 @@ export class App {
         this.globals();
         this.events();
     }
-    @traceable(false)
-    private globals() {
+    private async globals() {
         global.showBack = () => {
             dizmo.showBack();
         };
         global.showFront = () => {
             dizmo.showFront();
         };
+        global.T = await I18N.init();
     }
-    @traceable(false)
     private events() {
         document.getElementById('done')
             .onclick = this.onClick.bind(this);
@@ -37,14 +36,7 @@ document.addEventListener('dizmoready', () => {
     global.TRACE = bundle.privateStorage.getProperty('TRACE', {
         fallback: false
     });
-    I18N.init((t: TranslationFunction) => {
-        const cell = document.getElementsByClassName('table-cell')[0];
-        cell.textContent = t('greeting');
-        const done = document.getElementById('done');
-        done.textContent = t('done');
-
-        global.APP = new App();
-    });
+    global.APP = new App();
 }, {
     once: true
 });

@@ -41,7 +41,7 @@ module.exports = class extends Generator {
             );
             pkg.devDependencies = sort(
                 lodash.assign(pkg.devDependencies, {
-                    '@types/i18next': '^11.9.3'
+                    '@types/i18next': '^12.1.0'
                 })
             );
             pkg.devDependencies = sort(
@@ -52,10 +52,6 @@ module.exports = class extends Generator {
                     'typescript': '^3.1.4'
                 })
             );
-            delete pkg.dependencies['@babel/polyfill'];
-            delete pkg.devDependencies['@babel/core'];
-            delete pkg.devDependencies['@babel/preset-env'];
-            delete pkg.devDependencies['babelify'];
             delete pkg.devDependencies['gulp-eslint'];
             delete pkg['babel'];
             this.fs.writeJSON(
