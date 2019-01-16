@@ -5,6 +5,7 @@ declare const bundle: Bundle;
 import Dizmo from './dizmo/types/dizmo';
 declare const dizmo: Dizmo;
 
+import { traceable } from '@dizmo/functions';
 import { trace } from '@dizmo/functions';
 import { I18N } from './i18n';
 
@@ -23,6 +24,7 @@ export class App {
         };
         global.T = await I18N.init();
     }
+    @traceable(false)
     private events() {
         document.getElementById('done')
             .onclick = this.onClick.bind(this);
