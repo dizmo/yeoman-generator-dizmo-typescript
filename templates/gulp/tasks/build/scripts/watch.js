@@ -12,7 +12,7 @@ let buffer = require('vinyl-buffer'),
     watchify = require('watchify');
 
 let watched = watchify(browserify({basedir: '.', entries: [
-        'node_modules/@babel/polyfill/lib/index.js', 'src/app/app.ts'
+        'node_modules/@babel/polyfill/dist/polyfill.js', 'src/app/app.ts'
     ], cache: {}, packageCache: {}, debug: true
 }).plugin(require('tsify')).transform('babelify', {
     presets: ['@babel/preset-env'], extensions: ['.ts']
