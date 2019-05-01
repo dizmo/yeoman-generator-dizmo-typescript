@@ -53,8 +53,10 @@ gulp.task('scripts', function () {
         .argv.minify;
 
     let sourcemaps = false,
-        obfuscate = cli_min === true,
-        uglify = cli_min === true;
+        obfuscate = false,
+        uglify = cli_min === true
+            ? { keep_fnames: true }
+            : false;
 
     if (pkg.dizmo && pkg.dizmo.build) {
         let cfg_min = pkg.dizmo.build.minify;
@@ -111,12 +113,12 @@ gulp.task('scripts', function () {
     }
     if (argv.obfuscate || argv.obfuscate === undefined) {
         stream = stream.pipe(gulp_obfuscator.apply(
-            this, extend({}, argv.obfuscate)
+            this, [extend({}, argv.obfuscate)]
         ));
     }
     if (argv.uglify || argv.uglify === undefined) {
         stream = stream.pipe(gulp_uglify.apply(
-            this, extend({}, argv.uglify)
+            this, [extend({}, argv.uglify)]
         ));
     }
     if (argv.sourcemaps) {

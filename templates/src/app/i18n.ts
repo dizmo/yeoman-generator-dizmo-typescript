@@ -8,7 +8,7 @@ declare const i18n: (
 ) => void;
 
 export class I18N {
-    public static init(): Promise<TranslationFunction> {
+    public static init() {
         return new Promise((resolve, reject) => {
             i18n((error: any, t: TranslationFunction): void => {
                 if (t && !error) {

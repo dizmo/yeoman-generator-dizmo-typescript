@@ -33,6 +33,7 @@ yo @dizmo/dizmo --help
 ```
 
 Within an existing project:
+
 ```sh
 yo @dizmo/dizmo --upgrade
 ```

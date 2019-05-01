@@ -1,13 +1,16 @@
-import Global from './dizmo/types/global';
+import { Global } from '@dizmo/types';
 declare const global: Global;
-import Bundle from './dizmo/types/bundle';
+import { Bundle } from '@dizmo/types';
 declare const bundle: Bundle;
-import Dizmo from './dizmo/types/dizmo';
+import { Dizmo } from '@dizmo/types';
 declare const dizmo: Dizmo;
 
-import { traceable } from '@dizmo/functions';
 import { trace } from '@dizmo/functions';
 import { I18N } from './i18n';
+
+global.TRACE = bundle.privateStorage.getProperty('TRACE', {
+    fallback: false
+});
 
 @trace
 export class App {
@@ -24,7 +27,6 @@ export class App {
         };
         global.T = await I18N.init();
     }
-    @traceable(false)
     private events() {
         document.getElementById('done')
             .onclick = this.onClick.bind(this);
@@ -35,9 +37,6 @@ export class App {
 }
 
 document.addEventListener('dizmoready', () => {
-    global.TRACE = bundle.privateStorage.getProperty('TRACE', {
-        fallback: false
-    });
     global.APP = new App();
 }, {
     once: true
