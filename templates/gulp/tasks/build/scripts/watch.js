@@ -9,12 +9,13 @@ let buffer = require('vinyl-buffer'),
     extend = require('xtend'),
     source = require('vinyl-source-stream'),
     through = require('through2'),
-    watchify = require('watchify');
+    watchify = require('watchify'),
+    tsify = require('tsify');
 
 let watched = watchify(browserify({basedir: '.', entries: [
         'node_modules/@babel/polyfill/dist/polyfill.js', 'src/app/app.ts'
     ], cache: {}, packageCache: {}, debug: true
-}).plugin(require('tsify')).transform('babelify', {
+}).plugin(tsify).transform('babelify', {
     presets: ['@babel/preset-env'], extensions: ['.ts']
 }));
 
