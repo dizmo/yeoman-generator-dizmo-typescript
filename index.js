@@ -41,7 +41,6 @@ module.exports = class extends Generator {
             );
             delete pkg.devDependencies['gulp-eslint'];
             delete pkg.devDependencies['esmify'];
-            delete pkg['babel'];
             this.fs.writeJSON(
                 this.destinationPath('package.json'), pkg, null, 2
             );

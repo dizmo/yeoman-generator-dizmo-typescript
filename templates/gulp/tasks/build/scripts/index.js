@@ -7,8 +7,7 @@ let buffer = require('vinyl-buffer'),
     browserify = require('browserify'),
     extend = require('xtend'),
     source = require('vinyl-source-stream'),
-    through = require('through2'),
-    tsify = require('tsify');
+    through = require('through2');
 
 function ensure(package, callback) {
     require('fs').access(
@@ -100,7 +99,7 @@ gulp.task('scripts', function () {
         basedir: '.', debug: !!argv.sourcemaps, entries: [
             'node_modules/@babel/polyfill/dist/polyfill.js', 'src/app/app.ts'
         ]
-    }).plugin(tsify).transform('babelify', {
+    }).plugin('tsify').transform('babelify', {
         presets: ['@babel/preset-env'], extensions: [
             '.js','.jsx','.ts','.tsx'
         ]
