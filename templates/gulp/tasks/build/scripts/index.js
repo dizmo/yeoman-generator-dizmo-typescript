@@ -100,9 +100,7 @@ gulp.task('scripts', function () {
             'node_modules/@babel/polyfill/dist/polyfill.js', 'src/app/app.ts'
         ]
     }).plugin('tsify').transform('babelify', {
-        presets: ['@babel/preset-env'], extensions: [
-            '.js','.jsx','.ts','.tsx'
-        ]
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
     });
 
     let stream = browserified.bundle()

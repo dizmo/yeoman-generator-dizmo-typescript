@@ -15,9 +15,7 @@ let watched = watchify(browserify({basedir: '.', entries: [
         'node_modules/@babel/polyfill/dist/polyfill.js', 'src/app/app.ts'
     ], cache: {}, packageCache: {}, debug: true
 }).plugin('tsify').transform('babelify', {
-    presets: ['@babel/preset-env'], extensions: [
-        '.js','.jsx','.ts','.tsx'
-    ]
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
 }));
 
 function ensure(package, callback) {
