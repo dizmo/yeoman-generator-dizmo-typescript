@@ -96,10 +96,15 @@ gulp.task('scripts', function () {
     }
 
     let browserified = browserify({
-        basedir: '.', debug: !!argv.sourcemaps, entries: [
-            'node_modules/@babel/polyfill/dist/polyfill.js', 'src/app/app.ts'
+        basedir: '.',
+        debug: !!argv.sourcemaps,
+        entries: [
+            'node_modules/@babel/polyfill/dist/polyfill.js',
+            'src/app/app.ts'
         ]
-    }).plugin('tsify').transform('babelify', {
+    })
+    .plugin('tsify')
+    .transform('babelify', {
         extensions: ['.js', '.jsx', '.ts', '.tsx']
     });
 
