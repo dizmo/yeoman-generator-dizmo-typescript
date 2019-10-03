@@ -1,22 +1,20 @@
-let pkg = require('../../../package.js'),
-    path = require('path');
-let gulp = require('gulp'),
-    gulp_util = require('gulp-util'),
-    gulp_uglify = require('gulp-uglify'),
-    gulp_sourcemaps = require('gulp-sourcemaps');
-let buffer = require('vinyl-buffer'),
-    browserify = require('browserify'),
-    extend = require('xtend'),
-    source = require('vinyl-source-stream'),
-    through = require('through2'),
-    watchify = require('watchify');
+const pkg = require('../../../package.js');
+const path = require('path');
 
-let watched = watchify(
+const gulp = require('gulp');
+const gulp_util = require('gulp-util');
+const gulp_uglify = require('gulp-uglify');
+const gulp_sourcemaps = require('gulp-sourcemaps');
+
+const buffer = require('vinyl-buffer');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const through = require('through2');
+const watchify = require('watchify');
+
+const watched = watchify(
     browserify({
-        basedir: '.',
-        cache: {},
-        debug: true,
-        entries: [
+        basedir: '.', cache: {}, debug: true, entries: [
             'node_modules/@babel/polyfill/dist/polyfill.js',
             'src/app/app.ts'
         ],
@@ -30,7 +28,7 @@ let watched = watchify(
 
 function ensure(package, callback) {
     require('fs').access(
-        './node_modules/' + package, function (error)
+        './node_modules/' + package, (error) =>
     {
         if (error) {
             let npm_install = require('child_process').spawn('npm', [
@@ -38,7 +36,7 @@ function ensure(package, callback) {
             ], {
                 shell: true, stdio: 'ignore'
             });
-            npm_install.on('exit', function () {
+            npm_install.on('exit', () => {
                 callback(require(package));
             });
         } else {
@@ -48,15 +46,15 @@ function ensure(package, callback) {
 }
 
 function gulp_obfuscator(opts) {
-    return through.obj(function (file, encoding, callback) {
+    return through.obj((file, encoding, callback) => {
         if (file.isNull()) {
             return callback(null, file);
         }
         if (file.isStream()) {
             return callback(new Error('streaming not supported', null));
         }
-        ensure('javascript-obfuscator', function (obfuscator) {
-            let result = obfuscator.obfuscate(
+        ensure('javascript-obfuscator', (obfuscator) => {
+            const result = obfuscator.obfuscate(
                 file.contents.toString(encoding), opts);
             file.contents = Buffer.from(
                 result.getObfuscatedCode(), encoding);
@@ -66,41 +64,13 @@ function gulp_obfuscator(opts) {
 }
 
 function on_watch() {
-    let cli_min = require('yargs')
-        .default('minify')
-        .argv.minify;
-
-    let sourcemaps = false,
-        obfuscate = cli_min === true,
-        uglify = cli_min === true;
-
-    if (pkg.dizmo && pkg.dizmo.build) {
-        let cfg_min = pkg.dizmo.build.minify;
-        if (cfg_min) {
-            let cfg_ss = cfg_min.scripts !== undefined ? cfg_min.scripts : {};
-            if (cfg_ss) {
-                if (cfg_ss.sourcemaps) // by default w/o a source-map!
-                {
-                    sourcemaps = extend({loadMaps: true}, cfg_ss.sourcemaps);
-                }
-                if (cli_min === undefined && (
-                    cfg_ss.obfuscate || cfg_ss.obfuscate === undefined))
-                {
-                    obfuscate = extend({}, cfg_ss.obfuscate);
-                }
-                if (cli_min === undefined && (
-                    cfg_ss.uglify || cfg_ss.uglify === undefined))
-                {
-                    uglify = extend({}, cfg_ss.uglify);
-                }
-            }
-        }
-    }
-
-    let argv = require('yargs')
-        .default('sourcemaps', sourcemaps)
-        .default('obfuscate', obfuscate)
-        .default('uglify', uglify).argv;
+    const cli_min = require('yargs')
+        .default('minify').argv.minify;
+    const argv = require('yargs')
+        .default('sourcemaps', false)
+        .default('obfuscate', false)
+        .default('uglify', cli_min === true
+            ? { keep_fnames: true } : false).argv;
 
     if (typeof argv.sourcemaps === 'string') {
         argv.sourcemaps = JSON.parse(argv.sourcemaps);
@@ -116,18 +86,14 @@ function on_watch() {
         .pipe(source('index.js')).pipe(buffer());
     if (argv.sourcemaps) {
         stream = stream.pipe(gulp_sourcemaps.init(
-            extend({loadMaps: true}, argv.sourcemaps)
+            { loadMaps: true, ...argv.sourcemaps }
         ));
     }
     if (argv.obfuscate) {
-        stream = stream.pipe(gulp_obfuscator.apply(
-            this, extend({}, argv.obfuscate)
-        ));
+        stream = stream.pipe(gulp_obfuscator({ ...argv.obfuscate }));
     }
     if (argv.uglify) {
-        stream = stream.pipe(gulp_uglify.apply(
-            this, extend({}, argv.uglify)
-        ));
+        stream = stream.pipe(gulp_uglify({ ...argv.uglify }));
     }
     if (argv.sourcemaps) {
         stream = stream.pipe(gulp_sourcemaps.write(

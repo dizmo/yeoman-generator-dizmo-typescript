@@ -20,6 +20,42 @@ module.exports = class extends Generator {
             const pkg = this.fs.readJSON(
                 this.destinationPath('package.json')
             );
+            delete pkg.devDependencies['babel-loader'];
+            delete pkg.devDependencies['webpack'];
+            delete pkg.devDependencies['webpack-stream'];
+            delete pkg.optionalDependencies['webpack-obfuscator'];
+            delete pkg.optionalDependencies['terser-webpack-plugin'];
+            this.fs.writeJSON(
+                this.destinationPath('package.json'), pkg, null, 2
+            );
+        }
+        if (!upgrade || upgrade) {
+            const pkg = this.fs.readJSON(
+                this.destinationPath('package.json')
+            );
+            pkg.devDependencies = sort(
+                lodash.assign(pkg.devDependencies, {
+                    'babelify': '^10.0.0',
+                    'browserify': '^16.5.0',
+                    'gulp-uglify': '^3.0.2',
+                    'vinyl-buffer': '^1.0.1',
+                    'vinyl-source-stream': '^2.0.0',
+                    'watchify': '^3.11.1'
+                })
+            );
+            pkg.optionalDependencies = sort(
+                lodash.assign(pkg.optionalDependencies, {
+                    'javascript-obfuscator': '^0.18.1'
+                })
+            );
+            this.fs.writeJSON(
+                this.destinationPath('package.json'), pkg, null, 2
+            );
+        }
+        if (!upgrade || upgrade) {
+            const pkg = this.fs.readJSON(
+                this.destinationPath('package.json')
+            );
             pkg.dependencies = sort(
                 lodash.assign(pkg.dependencies, {
                     '@dizmo/functions': '^2.7.5',
@@ -28,21 +64,22 @@ module.exports = class extends Generator {
             );
             pkg.devDependencies = sort(
                 lodash.assign(pkg.devDependencies, {
-                    '@types/i18next': '^12.1.0'
-                })
-            );
-            pkg.devDependencies = sort(
-                lodash.assign(pkg.devDependencies, {
                     'gulp-tslint': '^8.1.4',
                     'tsify': '^4.0.1',
-                    'tslint': '^5.17.0',
-                    'typescript': '^3.5.2'
+                    'tslint': '^5.20.0',
+                    'typescript': '^3.6.3'
                 })
             );
             delete pkg.devDependencies['gulp-eslint'];
             delete pkg.devDependencies['esmify'];
             this.fs.writeJSON(
                 this.destinationPath('package.json'), pkg, null, 2
+            );
+        }
+        if (!upgrade) {
+            this.fs.copy(
+                this.templatePath('babel.config.js'),
+                this.destinationPath('babel.config.js')
             );
         }
         if (!upgrade) {
@@ -67,6 +104,9 @@ module.exports = class extends Generator {
         );
         rimraf.sync(
             this.destinationPath('src/index.js')
+        );
+        rimraf.sync(
+            this.destinationPath('webpack.config.js')
         );
     }
 };

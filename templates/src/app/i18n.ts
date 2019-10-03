@@ -1,25 +1,16 @@
-import * as I18next from 'i18next';
-
-export type TranslationFunction = I18next.TranslationFunction;
-export type TranslationOptions = I18next.TranslationOptions;
+export type TranslationFunction =
+    (key?: string, separator?: string | RegExp) => string | object;
 
 declare const i18n: (
-    callback: (error: any, t: TranslationFunction) => void
-) => void;
+    callback?: (error: any, t: TranslationFunction) => void
+) => Promise<TranslationFunction> | void;
 
 export class I18N {
     public static init() {
         return new Promise((resolve, reject) => {
             i18n((error: any, t: TranslationFunction): void => {
                 if (t && !error) {
-                    resolve(this.translate((
-                        key: string, options: TranslationOptions = {}
-                    ): string => {
-                        if (options.keySeparator === undefined) {
-                            options.keySeparator = '/';
-                        }
-                        return t(key, options);
-                    }));
+                    resolve(this.translate(t));
                 } else {
                     reject(error);
                 }
@@ -28,9 +19,9 @@ export class I18N {
     }
     private static translate(t: TranslationFunction): TranslationFunction {
         const cell = document.getElementsByClassName('table-cell')[0];
-        cell.textContent = t('greeting');
+        cell.textContent = t('#front/greeting') as string;
         const done = document.getElementById('done');
-        done.textContent = t('done');
+        done.textContent = t('#back/done') as string;
         return t;
     }
 }
