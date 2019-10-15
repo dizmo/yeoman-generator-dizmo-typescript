@@ -19,6 +19,8 @@ module.exports = class extends Generator {
         if (!upgrade || upgrade) {
             const tpl_path = this.templatePath('webpack.config.js');
             const dst_path = this.destinationPath('webpack.config.js');
+            const pkg_path = this.destinationPath('package.json');
+            const pkg = this.fs.readJSON(pkg_path);
             try {
                 const config = require(dst_path) || {};
                 const module = config.module || {};
@@ -30,19 +32,18 @@ module.exports = class extends Generator {
                     r.loader.match(/ts-loader/)
                 )) {
                     this.fs.copyTpl(tpl_path, dst_path, {
-                        dizmoName: this.options.name
+                        dizmoName: pkg.name
                     });
                 }
             } catch (ex) {
                 this.fs.copyTpl(tpl_path, dst_path, {
-                    dizmoName: this.options.name
+                    dizmoName: pkg.name
                 });
             }
         }
         if (!upgrade || upgrade) {
-            const pkg = this.fs.readJSON(
-                this.destinationPath('package.json')
-            );
+            const pkg_path = this.destinationPath('package.json');
+            const pkg = this.fs.readJSON(pkg_path);
             pkg.dependencies = sort(
                 lodash.assign(pkg.dependencies, {
                     '@dizmo/types': '^1.0.4'
@@ -57,9 +58,7 @@ module.exports = class extends Generator {
                 })
             );
             delete pkg.devDependencies['gulp-eslint'];
-            this.fs.writeJSON(
-                this.destinationPath('package.json'), pkg, null, 2
-            );
+            this.fs.writeJSON(pkg_path, pkg, null, 2);
         }
         if (!upgrade) {
             this.fs.copy(

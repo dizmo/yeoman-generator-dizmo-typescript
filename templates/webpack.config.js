@@ -6,11 +6,12 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /\.tsx?$/,
+            test: /\.tsx?$/i,
+            exclude: [/node_modules/i],
             use: 'ts-loader'
         }, {
-            test: /\.js$/,
-            exclude: [/\.(min|umd)\.js$/],
+            test: /\.js$/i,
+            exclude: [/node_modules/i, /\.(min|umd)\.js$/i],
             use: {
                 loader: 'babel-loader',
                 options: {
@@ -21,7 +22,7 @@ module.exports = {
         }]
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js'],
+        extensions: ['.ts', '.tsx', '.js']
     },
     output: {
         path: resolve(__dirname, 'build', '<%= dizmoName %>'),
