@@ -53,7 +53,7 @@ module.exports = class extends Generator {
                     'gulp-tslint': '^8.1.4',
                     'ts-loader': '^6.2.0',
                     'tslint': '^5.20.0',
-                    'typescript': '^3.6.3'
+                    'typescript': '^3.6.4'
                 })
             );
             delete pkg.devDependencies['gulp-eslint'];
