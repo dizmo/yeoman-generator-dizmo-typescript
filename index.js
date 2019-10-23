@@ -52,7 +52,7 @@ module.exports = class extends Generator {
             pkg.devDependencies = sort(
                 lodash.assign(pkg.devDependencies, {
                     'gulp-tslint': '^8.1.4',
-                    'ts-loader': '^6.2.0',
+                    'ts-loader': '^6.2.1',
                     'tslint': '^5.20.0',
                     'typescript': '^3.6.4'
                 })
