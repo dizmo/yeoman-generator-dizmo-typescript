@@ -21,7 +21,7 @@ module.exports = class extends Generator {
             const dst_path = this.destinationPath('webpack.config.js');
             const pkg_path = this.destinationPath('package.json');
             const pkg = this.fs.readJSON(pkg_path);
-            try {
+            if (!this.fs.exists(dst_path)) try {
                 const config = require(dst_path) || {};
                 const module = config.module || {};
                 const rules = module.rules || [];
