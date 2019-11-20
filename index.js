@@ -44,8 +44,8 @@ module.exports = class extends Generator {
         if (!upgrade || upgrade) {
             const pkg_path = this.destinationPath('package.json');
             const pkg = this.fs.readJSON(pkg_path);
-            pkg.dependencies = sort(
-                lodash.assign(pkg.dependencies, {
+            pkg.devDependencies = sort(
+                lodash.assign(pkg.devDependencies, {
                     '@dizmo/types': '^1.0.4'
                 })
             );
