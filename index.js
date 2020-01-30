@@ -53,8 +53,8 @@ module.exports = class extends Generator {
                 lodash.assign(pkg.devDependencies, {
                     'gulp-tslint': '^8.1.4',
                     'ts-loader': '^6.2.1',
-                    'tslint': '^5.20.0',
-                    'typescript': '^3.6.4'
+                    'tslint': '^6.0.0',
+                    'typescript': '^3.7.5'
                 })
             );
             delete pkg.devDependencies['gulp-eslint'];
