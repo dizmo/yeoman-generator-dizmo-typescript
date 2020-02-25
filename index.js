@@ -15,6 +15,10 @@ module.exports = class extends Generator {
                 this.templatePath('gulp/'),
                 this.destinationPath('gulp/')
             );
+            this.fs.copy(
+                this.templatePath('_eslintrc.json'),
+                this.destinationPath('.eslintrc.json')
+            );
         }
         if (!upgrade || upgrade) {
             const tpl_path = this.templatePath('webpack.config.js');
@@ -46,28 +50,25 @@ module.exports = class extends Generator {
             const pkg = this.fs.readJSON(pkg_path);
             pkg.devDependencies = sort(
                 lodash.assign(pkg.devDependencies, {
-                    '@dizmo/types': '^1.0.4'
+                    '@dizmo/types': '^1.0.4',
+                    '@typescript-eslint/parser': '2.21.0',
+                    '@typescript-eslint/eslint-plugin': '2.21.0'
                 })
             );
             pkg.devDependencies = sort(
                 lodash.assign(pkg.devDependencies, {
-                    'gulp-tslint': '^8.1.4',
                     'ts-loader': '^6.2.1',
-                    'tslint': '^6.0.0',
-                    'typescript': '^3.7.5'
+                    'typescript': '^3.8.2'
                 })
             );
-            delete pkg.devDependencies['gulp-eslint'];
+            delete pkg.devDependencies['gulp-tslint'];
+            delete pkg.devDependencies['tslint'];
             this.fs.writeJSON(pkg_path, pkg, null, 2);
         }
         if (!upgrade) {
             this.fs.copy(
                 this.templatePath('src/'),
                 this.destinationPath('src/')
-            );
-            this.fs.copy(
-                this.templatePath('tslint.json'),
-                this.destinationPath('tslint.json')
             );
             this.fs.copy(
                 this.templatePath('tsconfig.json'),
@@ -78,7 +79,7 @@ module.exports = class extends Generator {
     }
     end() {
         rimraf.sync(
-            this.destinationPath('.eslintrc.json')
+            this.destinationPath('tslint.json')
         );
         rimraf.sync(
             this.destinationPath('src/index.js')

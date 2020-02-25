@@ -1,3 +1,6 @@
+/* eslint @typescript-eslint/explicit-function-return-type: 0 */
+/* eslint @typescript-eslint/no-explicit-any: 0 */
+
 import { Global } from "@dizmo/types";
 declare const global: Global;
 import { Dizmo } from "@dizmo/types";
