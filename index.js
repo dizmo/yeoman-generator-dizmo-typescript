@@ -65,6 +65,18 @@ module.exports = class extends Generator {
             delete pkg.devDependencies['tslint'];
             this.fs.writeJSON(pkg_path, pkg, null, 2);
         }
+        if (!upgrade || upgrade) {
+            const pkg_path = this.destinationPath('package.json');
+            const pkg = this.fs.readJSON(pkg_path);
+            pkg.optionalDependencies = sort(
+                lodash.assign(pkg.optionalDependencies, {
+                    'closure-webpack-plugin': '^2.3.0',
+                    'google-closure-compiler': '^20200406.0.0',
+                })
+            );
+            delete pkg.optionalDependencies['terser-webpack-plugin'];
+            this.fs.writeJSON(pkg_path, pkg, null, 2);
+        }
         if (!upgrade) {
             this.fs.copy(
                 this.templatePath('src/'),
